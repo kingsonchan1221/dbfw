@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DRAGON BALL SUPER CARD GAME - FUSION WORLD 圖鑑</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Noto Sans TC & Orbitron -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Noto+Sans+TC:wght@400;500;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
+                        display: ['Orbitron', 'Noto Sans TC', 'sans-serif'],
+                    },
+                    colors: {
+                        db: {
+                            bg: '#07090F',
+                            surface: '#0F1422',
+                            card: '#151C2F',
+                            border: '#232E4A',
+                            gold: '#F59E0B',
+                            orange: '#F97316',
+                            blue: '#0EA5E9',
+                            red: '#EF4444',
+                            green: '#10B981',
+                            yellow: '#EAB308',
+                            black: '#8B5CF6'
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'ki-glow': 'kiGlow 2.5s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        kiGlow: {
+                            '0%': { boxShadow: '0 0 15px rgba(245, 158, 11, 0.2), 0 0 30px rgba(249, 115, 22, 0.1)' },
+                            '100%': { boxShadow: '0 0 25px rgba(245, 158, 11, 0.45), 0 0 45px rgba(14, 165, 233, 0.25)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* 自訂滾動條與電競科幻細節 */
+        body {
+            background-color: #07090F;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(249, 115, 22, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 25%, rgba(14, 165, 233, 0.08) 0%, transparent 40%),
+                linear-gradient(to bottom, #07090F, #0B0F1A);
+            color: #F8FAFC;
+            overflow-x: hidden;
+        }
+
+        /* 能量網格背景紋理 */
+        .bg-grid-pattern {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(35, 46, 74, 0.2) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(35, 46, 74, 0.2) 1px, transparent 1px);
+        }
+
+        /* 卡牌懸浮微光與縮放 */
+        .card-item {
+            transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+        .card-item:hover {
+            transform: translateY(-6px) scale(1.02);
+            z-index: 10;
+        }
+
+        /* 3D 傾斜容器 */
+        .tilt-container {
+            perspective: 1200px;
+        }
+        .tilt-card {
+            transition: transform 0.12s ease-out;
+            transform-style: preserve-3d;
+            will-change: transform;
+        }
+        .tilt-glare {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), rgba(255,255,255,0.28) 0%, rgba(255,255,255,0) 65%);
+            opacity: var(--glare-opacity, 0);
+            transition: opacity 0.2s ease;
+            border-radius: 0.75rem;
+        }
+
+        /* 自訂捲軸 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #07090F;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #232E4A;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #F59E0B;
+        }
+
+        /* 隱藏捲軸但保留功能 */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-grid-pattern min-h-screen flex flex-col antialiased selection:bg-amber-500 selection:text-black">
+
+    <!-- 頂部導覽列 -->
+    <header class="sticky top-0 z-40 bg-[#07090F]/90 backdrop-blur-md border-b border-db-border shadow-lg shadow-black/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-3">
+            <!-- Brand Logo -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 via-orange-600 to-red-600 flex items-center justify-center shadow-lg shadow-orange-500/30 border border-amber-300/40 shrink-0">
+                    <i class="fa-solid fa-dragon text-white text-xl"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-display font-black text-base sm:text-xl tracking-wider bg-gradient-to-r from-amber-300 via-orange-400 to-amber-500 bg-clip-text text-transparent">
+                            FUSION WORLD
+                        </span>
+                        <span class="hidden sm:inline-block px-2 py-0.5 text-[10px] font-bold tracking-widest uppercase bg-sky-500/20 text-sky-300 border border-sky-500/40 rounded-md">
+                            CARD DEX
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-400 font-medium">七龍珠超卡牌遊戲 融合世界 — 全卡圖鑑資料庫</p>
+                </div>
+            </div>
+
+            <!-- 快取狀態與操作按鈕 -->
+            <div class="flex items-center gap-2 sm:gap-3 ml-auto">
+                <div id="cacheStatusBadge" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-db-surface border border-db-border text-xs text-slate-300">
+                    <span id="cacheStatusDot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                    <span id="cacheStatusText">初始化中...</span>
+                </div>
+                <button id="refreshCacheBtn" onclick="forceRefreshData()" title="清除本地快取並從 GitHub 重新下載最新卡表" 
+                    class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-amber-500/20 to-orange-500/20 hover:from-amber-500/30 hover:to-orange-500/30 text-amber-300 border border-amber-500/40 text-xs font-semibold transition active:scale-95 cursor-pointer">
+                    <i id="refreshIcon" class="fa-solid fa-arrows-rotate"></i>
+                    <span class="hidden sm:inline">更新資料</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主內容區 -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- 載入進度條橫幅 (資料下載時顯示) -->
+        <div id="loadingBanner" class="rounded-2xl bg-db-surface border border-amber-500/40 p-4 sm:p-5 shadow-xl animate-ki-glow">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2.5">
+                <div class="flex items-center gap-2.5">
+                    <i class="fa-solid fa-bolt text-amber-400 animate-bounce"></i>
+                    <span id="loadingTitle" class="font-bold text-sm sm:text-base text-amber-200">正在從開源資料庫匯聚氣息 (載入卡包資料)...</span>
+                </div>
+                <span id="loadingProgressText" class="text-xs font-mono text-sky-400 font-bold">0%</span>
+            </div>
+            <div class="w-full h-2.5 bg-slate-900 rounded-full overflow-hidden border border-slate-700/70">
+                <div id="loadingProgressBar" class="h-full bg-gradient-to-r from-amber-500 via-orange-500 to-sky-400 rounded-full transition-all duration-300" style="width: 5%"></div>
+            </div>
+            <p id="loadingSubText" class="text-xs text-slate-400 mt-2">初次載入將自動快取至瀏覽器 IndexedDB（有效期限 24 小時），後續瀏覽將瞬間開啟。</p>
+        </div>
+
+        <!-- 提示訊息框 (取代 alert) -->
+        <div id="toastMessage" class="fixed bottom-5 right-5 z-50 hidden max-w-sm rounded-xl bg-db-card border border-amber-500/50 px-4 py-3 shadow-2xl shadow-black/80 text-sm text-slate-100 flex items-center gap-3 transition-all">
+            <i id="toastIcon" class="fa-solid fa-circle-info text-amber-400 text-lg"></i>
+            <span id="toastText">訊息內容</span>
+        </div>
+
+        <!-- 篩選與搜尋控制面板 -->
+        <section class="rounded-2xl bg-db-surface/95 border border-db-border p-4 sm:p-5 shadow-xl space-y-4">
+            <!-- 第一排：關鍵字搜尋 + 卡包選擇 + 排序 -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+                <!-- 關鍵字搜尋 -->
+                <div class="md:col-span-5 relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" id="searchInput" placeholder="搜尋卡名、卡號 (如 FB01-001)、特徵或效果..." 
+                        class="w-full pl-10 pr-9 py-2.5 rounded-xl bg-[#090D16] border border-db-border focus:border-amber-500 focus:ring-1 focus:ring-amber-500 text-sm text-white placeholder-slate-500 outline-none transition">
+                    <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- 卡包選擇器 -->
+                <div class="md:col-span-4 relative">
+                    <div class="flex items-center">
+                        <span class="absolute left-3.5 text-amber-400 text-xs font-bold pointer-events-none">卡包</span>
+                        <select id="setSelect" class="w-full pl-12 pr-8 py-2.5 rounded-xl bg-[#090D16] border border-db-border focus:border-amber-500 text-sm text-white outline-none appearance-none cursor-pointer transition">
+                            <option value="ALL">全部卡包 (All Sets)</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-3.5 text-slate-400 text-xs pointer-events-none"></i>
+                    </div>
+                </div>
+
+                <!-- 排序選擇器 -->
+                <div class="md:col-span-3 relative">
+                    <div class="flex items-center">
+                        <span class="absolute left-3.5 text-sky-400 text-xs font-bold pointer-events-none">排序</span>
+                        <select id="sortSelect" class="w-full pl-12 pr-8 py-2.5 rounded-xl bg-[#090D16] border border-db-border focus:border-sky-500 text-sm text-white outline-none appearance-none cursor-pointer transition">
+                            <option value="code_asc">卡號 (由小到大)</option>
+                            <option value="code_desc">卡號 (由大到小)</option>
+                            <option value="cost_asc">費用 Cost (低 → 高)</option>
+                            <option value="cost_desc">費用 Cost (高 → 低)</option>
+                            <option value="power_desc">戰鬥力 Power (高 → 低)</option>
+                            <option value="power_asc">戰鬥力 Power (低 → 高)</option>
+                        </select>
+                        <i class="fa-solid fa-arrow-down-wide-short absolute right-3.5 text-slate-400 text-xs pointer-events-none"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第二排：顏色屬性、卡牌類型、稀有度 -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 pt-1 border-t border-db-border/60">
+                <!-- 顏色篩選 (多選) -->
+                <div class="lg:col-span-5 space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">顏色屬性 (Color - 可複選)</span>
+                    </div>
+                    <div id="colorFilterGroup" class="flex flex-wrap gap-1.5">
+                        <button type="button" data-color="Red" onclick="toggleColorFilter('Red')" class="color-btn px-3 py-1.5 rounded-lg text-xs font-bold border border-red-500/40 bg-red-500/10 text-red-300 hover:bg-red-500/25 transition flex items-center gap-1.5 cursor-pointer">
+                            <span class="w-2.5 h-2.5 rounded-full bg-red-500 shadow-[0_0_8px_#ef4444]"></span> 紅 Red
+                        </button>
+                        <button type="button" data-color="Blue" onclick="toggleColorFilter('Blue')" class="color-btn px-3 py-1.5 rounded-lg text-xs font-bold border border-sky-500/40 bg-sky-500/10 text-sky-300 hover:bg-sky-500/25 transition flex items-center gap-1.5 cursor-pointer">
+                            <span class="w-2.5 h-2.5 rounded-full bg-sky-500 shadow-[0_0_8px_#0ea5e9]"></span> 藍 Blue
+                        </button>
+                        <button type="button" data-color="Green" onclick="toggleColorFilter('Green')" class="color-btn px-3 py-1.5 rounded-lg text-xs font-bold border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/25 transition flex items-center gap-1.5 cursor-pointer">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></span> 綠 Green
+                        </button>
+                        <button type="button" data-color="Yellow" onclick="toggleColorFilter('Yellow')" class="color-btn px-3 py-1.5 rounded-lg text-xs font-bold border border-yellow-500/40 bg-yellow-500/10 text-yellow-300 hover:bg-yellow-500/25 transition flex items-center gap-1.5 cursor-pointer">
+                            <span class="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-[0_0_8px_#eab308]"></span> 黃 Yellow
+                        </button>
+                        <button type="button" data-color="Black" onclick="toggleColorFilter('Black')" class="color-btn px-3 py-1.5 rounded-lg text-xs font-bold border border-purple-500/40 bg-purple-500/10 text-purple-300 hover:bg-purple-500/25 transition flex items-center gap-1.5 cursor-pointer">
+                            <span class="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-[0_0_8px_#a855f7]"></span> 黑 Black
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 卡牌類型篩選 (多選) -->
+                <div class="lg:col-span-3 space-y-1.5">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">卡牌類型 (Card Type)</span>
+                    <div id="typeFilterGroup" class="flex flex-wrap gap-1.5">
+                        <button type="button" data-type="LEADER" onclick="toggleTypeFilter('LEADER')" class="type-btn px-2.5 py-1.5 rounded-lg text-xs font-bold border border-slate-700 bg-slate-800/60 text-slate-300 hover:border-amber-400 transition cursor-pointer">
+                            領袖 LEADER
+                        </button>
+                        <button type="button" data-type="BATTLE" onclick="toggleTypeFilter('BATTLE')" class="type-btn px-2.5 py-1.5 rounded-lg text-xs font-bold border border-slate-700 bg-slate-800/60 text-slate-300 hover:border-amber-400 transition cursor-pointer">
+                            戰鬥 BATTLE
+                        </button>
+                        <button type="button" data-type="EXTRA" onclick="toggleTypeFilter('EXTRA')" class="type-btn px-2.5 py-1.5 rounded-lg text-xs font-bold border border-slate-700 bg-slate-800/60 text-slate-300 hover:border-amber-400 transition cursor-pointer">
+                            額外 EXTRA
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 稀有度篩選 (多選) + 重設按鈕 -->
+                <div class="lg:col-span-4 space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">稀有度 (Rarity)</span>
+                        <button type="button" onclick="resetAllFilters()" class="text-xs text-amber-400 hover:text-amber-300 font-semibold flex items-center gap-1 cursor-pointer">
+                            <i class="fa-solid fa-rotate-left"></i> 重設全部篩選
+                        </button>
+                    </div>
+                    <div id="rarityFilterGroup" class="flex flex-wrap gap-1.5">
+                        <button type="button" data-rarity="L" onclick="toggleRarityFilter('L')" class="rarity-btn px-2.5 py-1.5 rounded-lg text-xs font-display font-bold border border-slate-700 bg-slate-800/60 text-slate-300 hover:border-amber-400 transition cursor-pointer">L</button>
+                        <button type="button" data-rarity="C" onclick="toggleRarityFilter('C')" class="rarity-btn px-2.5 py-1.5 rounded-lg text-xs font-display font-bold border border-slate-700 bg-slate-800/60 text-slate-300 hover:border-amber-400 transition cursor-pointer">C</button>
+                        <button type="button" data-rarity="UC" onclick="toggleRarityFilter('UC')" class="rarity-btn px-2.5 py-1.5 rounded-lg text-xs font-display font-bold border border-slate-700 bg-slate-800/60 text-slate-300 hover:border-amber-400 transition cursor-pointer">UC</button>
+                        <button type="button" data-rarity="R" onclick="toggleRarityFilter('R')" class="rarity-btn px-2.5 py-1.5 rounded-lg text-xs font-display font-bold border border-slate-700 bg-slate-800/60 text-slate-300 hover:border-amber-400 transition cursor-pointer">R</button>
+                        <button type="button" data-rarity="SR" onclick="toggleRarityFilter('SR')" class="rarity-btn px-2.5 py-1.5 rounded-lg text-xs font-display font-bold border border-slate-700 bg-slate-800/60 text-slate-300 hover:border-amber-400 transition cursor-pointer">SR</button>
+                        <button type="button" data-rarity="SCR" onclick="toggleRarityFilter('SCR')" class="rarity-btn px-2.5 py-1.5 rounded-lg text-xs font-display font-bold border border-slate-700 bg-slate-800/60 text-slate-300 hover:border-amber-400 transition cursor-pointer">SCR</button>
+                        <button type="button" data-rarity="PR" onclick="toggleRarityFilter('PR')" class="rarity-btn px-2.5 py-1.5 rounded-lg text-xs font-display font-bold border border-slate-700 bg-slate-800/60 text-slate-300 hover:border-amber-400 transition cursor-pointer">PR</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 統計數據摘要列 -->
+        <section class="rounded-xl bg-db-surface/80 border border-db-border px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-slate-400">篩選結果：</span>
+                    <span id="filteredCount" class="font-display font-black text-lg text-amber-400">0</span>
+                    <span class="text-xs text-slate-500">/ <span id="totalCount">0</span> 張卡牌</span>
+                </div>
+            </div>
+
+            <!-- 各顏色數量分布 -->
+            <div id="colorStatsBar" class="flex flex-wrap items-center gap-2 sm:gap-3 text-xs font-semibold">
+                <span class="px-2 py-1 rounded-md bg-red-500/15 text-red-300 border border-red-500/30">紅: <b id="statRed">0</b></span>
+                <span class="px-2 py-1 rounded-md bg-sky-500/15 text-sky-300 border border-sky-500/30">藍: <b id="statBlue">0</b></span>
+                <span class="px-2 py-1 rounded-md bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">綠: <b id="statGreen">0</b></span>
+                <span class="px-2 py-1 rounded-md bg-yellow-500/15 text-yellow-300 border border-yellow-500/30">黃: <b id="statYellow">0</b></span>
+                <span class="px-2 py-1 rounded-md bg-purple-500/15 text-purple-300 border border-purple-500/30">黑: <b id="statBlack">0</b></span>
+            </div>
+        </section>
+
+        <!-- 卡牌網格展示區 -->
+        <section>
+            <div id="cardsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5 sm:gap-4">
+                <!-- 卡牌項目將由 JS 動態渲染 -->
+            </div>
+
+            <!-- 查無資料空狀態 -->
+            <div id="emptyState" class="hidden py-16 text-center rounded-2xl bg-db-surface/50 border border-dashed border-db-border">
+                <i class="fa-solid fa-radar text-4xl text-slate-600 mb-3"></i>
+                <h3 class="text-lg font-bold text-slate-300">龍珠雷達偵測不到符合條件的卡牌</h3>
+                <p class="text-sm text-slate-500 mt-1 mb-4">請嘗試放寬顏色、稀有度篩選條件或更換搜尋關鍵字</p>
+                <button onclick="resetAllFilters()" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm transition cursor-pointer">
+                    重設所有篩選條件
+                </button>
+            </div>
+
+            <!-- 載入更多按鈕 (分頁優化流暢度) -->
+            <div id="loadMoreContainer" class="hidden mt-8 text-center">
+                <button id="loadMoreBtn" onclick="loadMoreCards()" class="px-6 py-3 rounded-xl bg-db-surface hover:bg-db-card border border-amber-500/40 text-amber-300 font-bold text-sm shadow-lg transition active:scale-95 cursor-pointer">
+                    <i class="fa-solid fa-angles-down mr-1.5"></i> 顯示更多卡牌 (<span id="remainingCount">0</span> 張剩餘)
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- 頁尾資訊 -->
+    <footer class="border-t border-db-border bg-[#05070C] py-6 mt-12 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 space-y-1.5">
+            <p>資料來源：<a href="https://github.com/apitcg/dragon-ball-fusion-tcg-data" target="_blank" rel="noopener" class="text-amber-400 hover:underline">apitcg/dragon-ball-fusion-tcg-data</a> (GitHub 開源專案)</p>
+            <p>本網頁為非官方粉絲製作之圖鑑檢索工具。Dragon Ball Super Card Game - Fusion World 版權歸屬於 ©BIRD STUDIO/SHUEISHA, TOEI ANIMATION & BANDAI。</p>
+        </div>
+    </footer>
+
+    <!-- 卡牌詳細資訊 Modal -->
+    <div id="cardModal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md overflow-y-auto" onclick="closeModalOnBackdrop(event)">
+        <div class="relative w-full max-w-4xl rounded-2xl bg-db-surface border border-amber-500/40 shadow-2xl shadow-amber-500/10 overflow-hidden my-auto animate-[fadeIn_0.2s_ease-out]" onclick="event.stopPropagation()">
+            <!-- 頂部飾條與關閉按鈕 -->
+            <div class="flex items-center justify-between px-5 py-3.5 bg-[#090D16] border-b border-db-border">
+                <div class="flex items-center gap-2.5">
+                    <span id="modalSetBadge" class="px-2.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 font-display text-xs font-bold">FB01</span>
+                    <span id="modalCode" class="font-display font-bold text-sm text-slate-300">FB01-001</span>
+                    <span id="modalRarityBadge" class="px-2 py-0.5 rounded-md bg-slate-800 text-amber-400 font-display text-xs font-black border border-slate-700">L</span>
+                </div>
+                <button onclick="closeCardModal()" class="w-8 h-8 rounded-lg bg-slate-800/80 hover:bg-red-500/20 hover:text-red-400 text-slate-400 flex items-center justify-center transition cursor-pointer">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Modal 內容雙欄 -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 p-5 sm:p-6 max-h-[82vh] overflow-y-auto">
+                <!-- 左欄：3D 互動卡圖 + 正反面切換 -->
+                <div class="md:col-span-5 flex flex-col items-center justify-center space-y-4">
+                    <div id="tiltWrapper" class="tilt-container w-full max-w-[300px] mx-auto cursor-grab active:cursor-grabbing">
+                        <div id="tiltCard" class="tilt-card relative rounded-xl overflow-hidden shadow-2xl shadow-black border border-white/15 bg-db-card aspect-[5/7]">
+                            <img id="modalCardImg" src="" alt="Card Artwork" class="w-full h-full object-cover">
+                            <div id="tiltGlare" class="tilt-glare"></div>
+                        </div>
+                    </div>
+
+                    <!-- 領袖卡正反面 (覺醒 Awaken) 切換按鈕 -->
+                    <div id="awakenToggleContainer" class="hidden w-full max-w-[300px]">
+                        <button id="toggleFaceBtn" onclick="toggleCardFace()" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-black font-black text-sm shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer">
+                            <i class="fa-solid fa-fire-flame-curved"></i>
+                            <span id="toggleFaceText">切換至覺醒面 (Awakened Side)</span>
+                        </button>
+                    </div>
+                    <p class="text-[11px] text-slate-500 text-center"><i class="fa-solid fa-hand-pointer mr-1"></i> 移動滑鼠或手指可體驗 3D 卡面光澤傾斜</p>
+                </div>
+
+                <!-- 右欄：詳細數值與技能文本 -->
+                <div class="md:col-span-7 flex flex-col justify-between space-y-4">
+                    <div class="space-y-4">
+                        <!-- 卡名與狀態標籤 -->
+                        <div>
+                            <div class="flex flex-wrap items-center gap-2 mb-1">
+                                <span id="modalFaceIndicator" class="hidden px-2 py-0.5 rounded text-[11px] font-bold bg-orange-500/20 text-orange-300 border border-orange-500/40">覺醒面 AWAKENED</span>
+                                <span id="modalColorBadge" class="px-2.5 py-0.5 rounded-md text-xs font-bold">紅 Red</span>
+                                <span id="modalTypeBadge" class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-slate-800 text-slate-200 border border-slate-700">LEADER</span>
+                            </div>
+                            <h2 id="modalCardName" class="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight">Son Goku</h2>
+                        </div>
+
+                        <!-- 核心戰鬥數值面板 -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                            <div class="p-3 rounded-xl bg-[#090D16] border border-db-border">
+                                <span class="text-[11px] text-slate-400 block">費用 Cost</span>
+                                <span id="modalCost" class="font-display font-black text-lg text-amber-400">-</span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-[#090D16] border border-db-border">
+                                <span class="text-[11px] text-slate-400 block">指定費用 Spec.</span>
+                                <span id="modalSpecCost" class="font-display font-bold text-sm text-sky-300">-</span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-[#090D16] border border-db-border">
+                                <span class="text-[11px] text-slate-400 block">戰鬥力 Power</span>
+                                <span id="modalPower" class="font-display font-black text-lg text-orange-400">15000</span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-[#090D16] border border-db-border">
+                                <span class="text-[11px] text-slate-400 block">連擊力 Combo</span>
+                                <span id="modalCombo" class="font-display font-black text-lg text-emerald-400">-</span>
+                            </div>
+                        </div>
+
+                        <!-- 特徵 Features / Traits -->
+                        <div class="p-3.5 rounded-xl bg-[#090D16] border border-db-border">
+                            <span class="text-xs font-bold text-slate-400 block mb-1.5">特徵 / 種族 (Features)</span>
+                            <div id="modalFeatures" class="flex flex-wrap gap-1.5">
+                                <span class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-200 text-xs font-medium">Saiyan / Universe 7</span>
+                            </div>
+                        </div>
+
+                        <!-- 技能效果 Effect -->
+                        <div class="p-4 rounded-xl bg-[#090D16] border border-db-border space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider"><i class="fa-solid fa-bolt mr-1"></i> 卡牌效果 (Effect)</span>
+                                <button onclick="copyCardInfo()" class="text-xs text-slate-400 hover:text-white flex items-center gap-1 cursor-pointer">
+                                    <i class="fa-regular fa-copy"></i> 複製卡號與效果
+                                </button>
+                            </div>
+                            <p id="modalEffect" class="text-sm text-slate-200 leading-relaxed whitespace-pre-line font-normal">
+                                [When Attacking] Draw 1 card.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 底部卡包資訊 -->
+                    <div class="pt-3 border-t border-db-border flex flex-wrap items-center justify-between text-xs text-slate-400 gap-2">
+                        <span>收錄卡包：<strong id="modalSetName" class="text-slate-200">Booster Pack -Awakened Pulse- [FB01]</strong></span>
+                        <span id="modalRawId" class="font-mono text-slate-500">ID: fb01-001</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * ============================================================================
+         * 1. 全域設定與常數定義
+         * ============================================================================
+         */
+        const GITHUB_API_URL = 'https://api.github.com/repos/apitcg/dragon-ball-fusion-tcg-data/contents/cards/en';
+        const RAW_BASE_URL = 'https://raw.githubusercontent.com/apitcg/dragon-ball-fusion-tcg-data/main/cards/en';
+        
+        // 備援檔案清單 (當 GitHub API 遇到 Rate Limit 403/429 時自動啟用)
+        const FALLBACK_FILES = [
+            'fb01.json', 'fb02.json', 'fb03.json', 'fb04.json', 'fb05.json', 'fb06.json',
+            'fs01.json', 'fs02.json', 'fs03.json', 'fs04.json', 'fs05.json', 'fs06.json', 'fs07.json', 'fs08.json',
+            'fp.json'
+        ];
+
+        // 知名卡包中文對照名稱
+        const SET_NAME_MAP = {
+            'FB01': 'FB01 - 覺醒的鼓動 (Awakened Pulse)',
+            'FB02': 'FB02 - 烈火的鬥氣 (Blazing Aura)',
+            'FB03': 'FB03 - 怒火的咆哮 (Raging Roar)',
+            'FB04': 'FB04 - 極限的超越 (Ultra Limit)',
+            'FB05': 'FB05 - 未知的冒險 (New Adventure)',
+            'FB06': 'FB06 - 迫近的威脅 (Rival Clash)',
+            'FS01': 'FS01 - 起始牌組 孫悟空 (Son Goku)',
+            'FS02': 'FS02 - 起始牌組 達爾 (Vegeta)',
+            'FS03': 'FS03 - 起始牌組 布羅利 (Broly)',
+            'FS04': 'FS04 - 起始牌組 弗力札 (Frieza)',
+            'FS05': 'FS05 - 起始牌組 巴達克 (Bardock)',
+            'FS06': 'FS06 - 起始牌組 孫悟空(迷你) (Son Goku Mini)',
+            'FS07': 'FS07 - 起始牌組 達爾(迷你) (Vegeta Mini)',
+            'FP':   'FP - 推廣特典卡 (Promotion Cards)'
+        };
+
+        // 顏色繁英與樣式對照
+        const COLOR_META = {
+            'Red':    { label: '紅 Red',    bg: 'bg-red-500/20',     text: 'text-red-300',     border: 'border-red-500/50',     dot: 'bg-red-500' },
+            'Blue':   { label: '藍 Blue',   bg: 'bg-sky-500/20',     text: 'text-sky-300',     border: 'border-sky-500/50',     dot: 'bg-sky-500' },
+            'Green':  { label: '綠 Green',  bg: 'bg-emerald-500/20', text: 'text-emerald-300', border: 'border-emerald-500/50', dot: 'bg-emerald-500' },
+            'Yellow': { label: '黃 Yellow', bg: 'bg-yellow-500/20',  text: 'text-yellow-300',  border: 'border-yellow-500/50',  dot: 'bg-yellow-400' },
+            'Black':  { label: '黑 Black',  bg: 'bg-purple-500/20',  text: 'text-purple-300',  border: 'border-purple-500/50',  dot: 'bg-purple-500' }
+        };
+
+        // 卡牌類型繁英對照
+        const TYPE_META = {
+            'LEADER': '領袖 LEADER',
+            'BATTLE': '戰鬥 BATTLE',
+            'EXTRA':  '額外 EXTRA'
+        };
+
+        // IndexedDB 快取設定 (快取效期 24 小時)
+        const DB_NAME = 'DBFW_CardDex_DB';
+        const DB_VERSION = 1;
+        const STORE_NAME = 'card_cache';
+        const CACHE_KEY = 'all_cards_v1';
+        const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 小時
+
+        // 應用程式狀態
+        let allCards = [];
+        let filteredCards = [];
+        let availableSets = new Set();
+        let currentPageSize = 60;
+        let displayedCount = 0;
+
+        // 篩選條件狀態
+        const filterState = {
+            search: '',
+            set: 'ALL',
+            colors: new Set(),
+            types: new Set(),
+            rarities: new Set(),
+            sort: 'code_asc'
+        };
+
+        // Modal 當前檢視卡牌與正反面狀態
+        let activeModalCard = null;
+        let isShowingBackFace = false;
+
+        /**
+         * ============================================================================
+         * 2. IndexedDB 瀏覽器快取引擎 (含 localStorage 備援)
+         * ============================================================================
+         */
+        function openIndexedDB() {
+            return new Promise((resolve, reject) => {
+                if (!window.indexedDB) {
+                    reject(new Error('瀏覽器不支援 IndexedDB'));
+                    return;
+                }
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains(STORE_NAME)) {
+                        db.createObjectStore(STORE_NAME, { keyPath: 'key' });
+                    }
+                };
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        async function getCachedCards() {
+            try {
+                const db = await openIndexedDB();
+                return new Promise((resolve) => {
+                    const tx = db.transaction(STORE_NAME, 'readonly');
+                    const store = tx.objectStore(STORE_NAME);
+                    const req = store.get(CACHE_KEY);
+                    req.onsuccess = () => {
+                        const record = req.result;
+                        if (!record) return resolve(null);
+                        const isExpired = (Date.now() - record.timestamp) > CACHE_TTL_MS;
+                        resolve({ ...record, isExpired });
+                    };
+                    req.onerror = () => resolve(null);
+                });
+            } catch (err) {
+                console.warn('讀取 IndexedDB 失敗:', err);
+                return null;
+            }
+        }
+
+        async function saveCardsToCache(cards, sourceInfo) {
+            try {
+                const db = await openIndexedDB();
+                return new Promise((resolve) => {
+                    const tx = db.transaction(STORE_NAME, 'readwrite');
+                    const store = tx.objectStore(STORE_NAME);
+                    store.put({
+                        key: CACHE_KEY,
+                        timestamp: Date.now(),
+                        sourceInfo,
+                        cards
+                    });
+                    tx.oncomplete = () => resolve(true);
+                    tx.onerror = () => resolve(false);
+                });
+            } catch (err) {
+                console.warn('寫入 IndexedDB 失敗:', err);
+                return false;
+            }
+        }
+
+        async function clearCacheStorage() {
+            try {
+                const db = await openIndexedDB();
+                return new Promise((resolve) => {
+                    const tx = db.transaction(STORE_NAME, 'readwrite');
+                    const store = tx.objectStore(STORE_NAME);
+                    store.delete(CACHE_KEY);
+                    tx.oncomplete = () => resolve(true);
+                    tx.onerror = () => resolve(false);
+                });
+            } catch (err) {
+                return false;
+            }
+        }
+
+        /**
+         * ============================================================================
+         * 3. GitHub 資料抓取與備援機制
+         * ============================================================================
+         */
+        async function fetchFileListFromGitHub() {
+            try {
+                const res = await fetch(GITHUB_API_URL, {
+                    headers: { 'Accept': 'application/vnd.github.v3+json' }
+                });
+                if (!res.ok) {
+                    throw new Error(`GitHub API 回應狀態 ${res.status}`);
+                }
+                const items = await res.json();
+                const jsonFiles = items
+                    .filter(item => item.type === 'file' && item.name.endsWith('.json'))
+                    .map(item => item.name);
+                if (jsonFiles.length > 0) {
+                    return { files: jsonFiles, usedFallback: false };
+                }
+                throw new Error('目錄中無 JSON 檔案');
+            } catch (err) {
+                console.warn('GitHub API 取得檔案清單受限或失敗，啟用備援清單:', err.message);
+                return { files: FALLBACK_FILES, usedFallback: true };
+            }
+        }
+
+        /**
+         * 標準化單張卡牌資料結構，確保不同卡包欄位一致
+         */
+        function normalizeCard(raw, fileName) {
+            const setCodeFromFile = fileName.replace('.json', '').toUpperCase();
+            const code = (raw.code || raw.id || 'UNKNOWN').toUpperCase();
+            const setPrefix = code.includes('-') ? code.split('-')[0] : setCodeFromFile;
+
+            // 解析顏色 (可能是字串 "Red" 或陣列 ["Red", "Blue"])
+            let colors = [];
+            if (Array.isArray(raw.color)) {
+                colors = raw.color.map(c => capitalizeFirst(String(c).trim()));
+            } else if (typeof raw.color === 'string' && raw.color.trim()) {
+                colors = raw.color.split('/').map(c => capitalizeFirst(c.trim()));
+            }
+            if (colors.length === 0) colors = ['Red'];
+
+            // 解析圖片網址
+            let frontImg = '';
+            let backImg = '';
+            if (raw.images && typeof raw.images === 'object') {
+                frontImg = raw.images.large || raw.images.small || '';
+            } else if (typeof raw.image === 'string') {
+                frontImg = raw.image;
+            }
+            // 檢查領袖卡是否有覺醒面 (back / awakened)
+            if (raw.back && typeof raw.back === 'object') {
+                if (raw.back.images) {
+                    backImg = raw.back.images.large || raw.back.images.small || '';
+                } else if (raw.back.image) {
+                    backImg = raw.back.image;
+                }
+            }
+
+            // 解析特徵 (features / traits)
+            let features = [];
+            if (Array.isArray(raw.features)) {
+                features = raw.features;
+            } else if (typeof raw.features === 'string' && raw.features.trim() && raw.features !== '-') {
+                features = raw.features.split('/').map(f => f.trim());
+            } else if (Array.isArray(raw.traits)) {
+                features = raw.traits;
+            }
+
+            // 解析數字欄位 (cost, power, comboPower)
+            const parseNum = (val) => {
+                if (val === null || val === undefined || val === '-' || val === '') return null;
+                const n = Number(String(val).replace(/[^0-9.-]/g, ''));
+                return isNaN(n) ? null : n;
+            };
+
+            return {
+                uid: `${setPrefix}_${code}_${raw.name || ''}`,
+                id: raw.id || code.toLowerCase(),
+                code: code,
+                setCode: setPrefix,
+                setName: (raw.set && raw.set.name) ? raw.set.name : (SET_NAME_MAP[setPrefix] || setPrefix),
+                name: raw.name || 'Unknown Card',
+                colors: colors,
+                cardType: (raw.cardType || raw.type || 'BATTLE').toUpperCase(),
+                rarity: (raw.rarity || 'C').toUpperCase(),
+                cost: parseNum(raw.cost),
+                specifiedCost: raw.specifiedCost || '-',
+                power: parseNum(raw.power),
+                comboPower: parseNum(raw.comboPower),
+                features: features,
+                effect: raw.effect || '-',
+                frontImg: frontImg,
+                backImg: backImg,
+                backData: raw.back || null
+            };
+        }
+
+        function capitalizeFirst(str) {
+            if (!str) return '';
+            return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+        }
+
+        /**
+         * 主資料載入流程：優先讀取快取 -> 若無或過期則從 GitHub 抓取並快取
+         */
+        async function initAppData(forceNetwork = false) {
+            const loadingBanner = document.getElementById('loadingBanner');
+            const progressBar = document.getElementById('loadingProgressBar');
+            const progressText = document.getElementById('loadingProgressText');
+            const loadingTitle = document.getElementById('loadingTitle');
+            const refreshIcon = document.getElementById('refreshIcon');
+
+            refreshIcon.classList.add('fa-spin');
+
+            if (!forceNetwork) {
+                const cached = await getCachedCards();
+                if (cached && cached.cards && cached.cards.length > 0 && !cached.isExpired) {
+                    allCards = cached.cards;
+                    updateCacheBadge('cached', cached.timestamp, allCards.length);
+                    loadingBanner.classList.add('hidden');
+                    refreshIcon.classList.remove('fa-spin');
+                    populateSetDropdown();
+                    applyFiltersAndRender();
+                    return;
+                }
+            }
+
+            // 顯示載入進度條
+            loadingBanner.classList.remove('hidden');
+            progressBar.style.width = '10%';
+            progressText.textContent = '10%';
+            loadingTitle.textContent = '正在取得 GitHub 卡包清單...';
+
+            const { files, usedFallback } = await fetchFileListFromGitHub();
+            let loadedFiles = 0;
+            const collectedCards = [];
+
+            // 併發下載各卡包 JSON 檔案
+            const fetchPromises = files.map(async (fileName) => {
+                try {
+                    const url = `${RAW_BASE_URL}/${fileName}`;
+                    const res = await fetch(url);
+                    if (!res.ok) return; // 備援清單中若某彈尚未推出則略過
+                    const data = await res.json();
+                    const list = Array.isArray(data) ? data : (data.cards || data.data || []);
+                    list.forEach(item => {
+                        collectedCards.push(normalizeCard(item, fileName));
+                    });
+                } catch (err) {
+                    console.warn(`略過或載入失敗 (${fileName}):`, err);
+                } finally {
+                    loadedFiles++;
+                    const pct = Math.min(98, Math.round(10 + (loadedFiles / files.length) * 88));
+                    progressBar.style.width = `${pct}%`;
+                    progressText.textContent = `${pct}%`;
+                    loadingTitle.textContent = `正在解析卡包資料 (${loadedFiles}/${files.length})...`;
+                }
+            });
+
+            await Promise.all(fetchPromises);
+
+            if (collectedCards.length > 0) {
+                allCards = collectedCards;
+                await saveCardsToCache(allCards, usedFallback ? 'fallback' : 'github-api');
+                updateCacheBadge('fresh', Date.now(), allCards.length, usedFallback);
+                showToast(`成功載入 ${allCards.length} 張卡牌並已快取至本地！`, 'success');
+            } else {
+                // 若完全斷網且有過期快取，則勉強使用過期快取
+                const staleCache = await getCachedCards();
+                if (staleCache && staleCache.cards) {
+                    allCards = staleCache.cards;
+                    updateCacheBadge('stale', staleCache.timestamp, allCards.length);
+                    showToast('網路連線異常，已載入離線備份快取資料。', 'warning');
+                } else {
+                    showToast('無法連線至 GitHub 資料庫，請檢查網路連線後重試。', 'error');
+                }
+            }
+
+            progressBar.style.width = '100%';
+            progressText.textContent = '100%';
+            setTimeout(() => {
+                loadingBanner.classList.add('hidden');
+                refreshIcon.classList.remove('fa-spin');
+            }, 350);
+
+            populateSetDropdown();
+            applyFiltersAndRender();
+        }
+
+        async function forceRefreshData() {
+            showToast('正在清除舊快取並重新同步 GitHub 最新卡表...', 'info');
+            await clearCacheStorage();
+            await initAppData(true);
+        }
+
+        function updateCacheBadge(status, timestamp, count, usedFallback = false) {
+            const dot = document.getElementById('cacheStatusDot');
+            const text = document.getElementById('cacheStatusText');
+            const timeStr = new Date(timestamp).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+
+            dot.classList.remove('animate-pulse', 'bg-amber-400', 'bg-emerald-400', 'bg-sky-400', 'bg-red-400');
+
+            if (status === 'cached') {
+                dot.classList.add('bg-emerald-400');
+                text.textContent = `本地快取 (${count}張 · ${timeStr})`;
+            } else if (status === 'fresh') {
+                dot.classList.add('bg-sky-400');
+                text.textContent = usedFallback 
+                    ? `備援同步完成 (${count}張)` 
+                    : `已同步最新 (${count}張 · ${timeStr})`;
+            } else {
+                dot.classList.add('bg-amber-400');
+                text.textContent = `離線快取 (${count}張)`;
+            }
+        }
+
+        /**
+         * ============================================================================
+         * 4. 篩選、排序與統計邏輯
+         * ============================================================================
+         */
+        function populateSetDropdown() {
+            const setSelect = document.getElementById('setSelect');
+            const setCounts = {};
+
+            allCards.forEach(card => {
+                setCounts[card.setCode] = (setCounts[card.setCode] || 0) + 1;
+            });
+
+            // 排序卡包代號 (FB01, FB02..., FS01..., FP)
+            const sortedSets = Object.keys(setCounts).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+
+            setSelect.innerHTML = `<option value="ALL">全部卡包 All Sets (${allCards.length} 張)</option>`;
+            sortedSets.forEach(code => {
+                const label = SET_NAME_MAP[code] || `${code} 卡包`;
+                const opt = document.createElement('option');
+                opt.value = code;
+                opt.textContent = `${label} (${setCounts[code]} 張)`;
+                setSelect.appendChild(opt);
+            });
+        }
+
+        function toggleColorFilter(color) {
+            if (filterState.colors.has(color)) {
+                filterState.colors.delete(color);
+            } else {
+                filterState.colors.add(color);
+            }
+            updateFilterButtonsUI();
+            applyFiltersAndRender();
+        }
+
+        function toggleTypeFilter(type) {
+            if (filterState.types.has(type)) {
+                filterState.types.delete(type);
+            } else {
+                filterState.types.add(type);
+            }
+            updateFilterButtonsUI();
+            applyFiltersAndRender();
+        }
+
+        function toggleRarityFilter(rarity) {
+            if (filterState.rarities.has(rarity)) {
+                filterState.rarities.delete(rarity);
+            } else {
+                filterState.rarities.add(rarity);
+            }
+            updateFilterButtonsUI();
+            applyFiltersAndRender();
+        }
+
+        function clearSearch() {
+            const input = document.getElementById('searchInput');
+            input.value = '';
+            filterState.search = '';
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+            applyFiltersAndRender();
+        }
+
+        function resetAllFilters() {
+            filterState.search = '';
+            filterState.set = 'ALL';
+            filterState.colors.clear();
+            filterState.types.clear();
+            filterState.rarities.clear();
+            filterState.sort = 'code_asc';
+
+            document.getElementById('searchInput').value = '';
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+            document.getElementById('setSelect').value = 'ALL';
+            document.getElementById('sortSelect').value = 'code_asc';
+
+            updateFilterButtonsUI();
+            applyFiltersAndRender();
+        }
+
+        function updateFilterButtonsUI() {
+            // 更新顏色按鈕狀態
+            document.querySelectorAll('.color-btn').forEach(btn => {
+                const color = btn.dataset.color;
+                const active = filterState.colors.has(color);
+                if (active) {
+                    btn.classList.add('ring-2', 'ring-white', 'scale-105', 'brightness-125');
+                } else {
+                    btn.classList.remove('ring-2', 'ring-white', 'scale-105', 'brightness-125');
+                }
+            });
+
+            // 更新類型按鈕狀態
+            document.querySelectorAll('.type-btn').forEach(btn => {
+                const type = btn.dataset.type;
+                const active = filterState.types.has(type);
+                if (active) {
+                    btn.classList.remove('border-slate-700', 'bg-slate-800/60', 'text-slate-300');
+                    btn.classList.add('border-amber-400', 'bg-amber-500/20', 'text-amber-300');
+                } else {
+                    btn.classList.add('border-slate-700', 'bg-slate-800/60', 'text-slate-300');
+                    btn.classList.remove('border-amber-400', 'bg-amber-500/20', 'text-amber-300');
+                }
+            });
+
+            // 更新稀有度按鈕狀態
+            document.querySelectorAll('.rarity-btn').forEach(btn => {
+                const rarity = btn.dataset.rarity;
+                const active = filterState.rarities.has(rarity);
+                if (active) {
+                    btn.classList.remove('border-slate-700', 'bg-slate-800/60', 'text-slate-300');
+                    btn.classList.add('border-sky-400', 'bg-sky-500/25', 'text-sky-300');
+                } else {
+                    btn.classList.add('border-slate-700', 'bg-slate-800/60', 'text-slate-300');
+                    btn.classList.remove('border-sky-400', 'bg-sky-500/25', 'text-sky-300');
+                }
+            });
+        }
+
+        function applyFiltersAndRender() {
+            const kw = filterState.search.toLowerCase().trim();
+
+            filteredCards = allCards.filter(card => {
+                // 1. 卡包篩選
+                if (filterState.set !== 'ALL' && card.setCode !== filterState.set) {
+                    return false;
+                }
+                // 2. 顏色篩選 (多選取聯集)
+                if (filterState.colors.size > 0) {
+                    const hasMatchingColor = card.colors.some(c => filterState.colors.has(c));
+                    if (!hasMatchingColor) return false;
+                }
+                // 3. 類型篩選
+                if (filterState.types.size > 0 && !filterState.types.has(card.cardType)) {
+                    return false;
+                }
+                // 4. 稀有度篩選
+                if (filterState.rarities.size > 0 && !filterState.rarities.has(card.rarity)) {
+                    return false;
+                }
+                // 5. 關鍵字搜尋 (卡名、卡號、特徵、效果)
+                if (kw) {
+                    const matchName = card.name.toLowerCase().includes(kw);
+                    const matchCode = card.code.toLowerCase().includes(kw);
+                    const matchFeatures = card.features.some(f => f.toLowerCase().includes(kw));
+                    const matchEffect = card.effect.toLowerCase().includes(kw);
+                    if (!matchName && !matchCode && !matchFeatures && !matchEffect) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+
+            // 排序
+            sortFilteredCards();
+
+            // 更新統計列
+            updateStatistics();
+
+            // 重置分頁並渲染網格
+            displayedCount = 0;
+            document.getElementById('cardsGrid').innerHTML = '';
+            renderNextBatch();
+        }
+
+        function sortFilteredCards() {
+            const mode = filterState.sort;
+            filteredCards.sort((a, b) => {
+                if (mode === 'code_asc') {
+                    return a.code.localeCompare(b.code, undefined, { numeric: true });
+                }
+                if (mode === 'code_desc') {
+                    return b.code.localeCompare(a.code, undefined, { numeric: true });
+                }
+                if (mode === 'cost_asc') {
+                    const ca = a.cost ?? 999;
+                    const cb = b.cost ?? 999;
+                    return ca - cb || a.code.localeCompare(b.code, undefined, { numeric: true });
+                }
+                if (mode === 'cost_desc') {
+                    const ca = a.cost ?? -1;
+                    const cb = b.cost ?? -1;
+                    return cb - ca || a.code.localeCompare(b.code, undefined, { numeric: true });
+                }
+                if (mode === 'power_desc') {
+                    const pa = a.power ?? -1;
+                    const pb = b.power ?? -1;
+                    return pb - pa || a.code.localeCompare(b.code, undefined, { numeric: true });
+                }
+                if (mode === 'power_asc') {
+                    const pa = a.power ?? 999999;
+                    const pb = b.power ?? 999999;
+                    return pa - pb || a.code.localeCompare(b.code, undefined, { numeric: true });
+                }
+                return 0;
+            });
+        }
+
+        function updateStatistics() {
+            document.getElementById('filteredCount').textContent = filteredCards.length;
+            document.getElementById('totalCount').textContent = allCards.length;
+
+            const stats = { Red: 0, Blue: 0, Green: 0, Yellow: 0, Black: 0 };
+            filteredCards.forEach(c => {
+                c.colors.forEach(col => {
+                    if (stats[col] !== undefined) stats[col]++;
+                });
+            });
+
+            document.getElementById('statRed').textContent = stats.Red;
+            document.getElementById('statBlue').textContent = stats.Blue;
+            document.getElementById('statGreen').textContent = stats.Green;
+            document.getElementById('statYellow').textContent = stats.Yellow;
+            document.getElementById('statBlack').textContent = stats.Black;
+        }
+
+        /**
+         * ============================================================================
+         * 5. 卡牌網格渲染與精美卡背佔位圖
+         * ============================================================================
+         */
+        function getFallbackCardBackSVG(code, name) {
+            const safeName = (name || 'FUSION WORLD').replace(/[<>&"']/g, '');
+            const safeCode = (code || '').replace(/[<>&"']/g, '');
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="420" viewBox="0 0 300 420">
+                <defs>
+                    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#0F172A"/>
+                        <stop offset="50%" stop-color="#1E1B4B"/>
+                        <stop offset="100%" stop-color="#090D16"/>
+                    </linearGradient>
+                    <radialGradient id="orb" cx="50%" cy="45%" r="40%">
+                        <stop offset="0%" stop-color="#F59E0B" stop-opacity="0.55"/>
+                        <stop offset="100%" stop-color="#F97316" stop-opacity="0"/>
+                    </radialGradient>
+                </defs>
+                <rect width="300" height="420" rx="16" fill="url(#bg)" stroke="#F59E0B" stroke-width="4"/>
+                <circle cx="150" cy="185" r="110" fill="url(#orb)"/>
+                <circle cx="150" cy="185" r="64" fill="none" stroke="#F59E0B" stroke-width="2" stroke-dasharray="6 4"/>
+                <text x="150" y="180" font-family="sans-serif" font-weight="900" font-size="20" fill="#FBBF24" text-anchor="middle">FUSION WORLD</text>
+                <text x="150" y="205" font-family="monospace" font-weight="bold" font-size="14" fill="#94A3B8" text-anchor="middle">${safeCode}</text>
+                <text x="150" y="365" font-family="sans-serif" font-weight="bold" font-size="13" fill="#E2E8F0" text-anchor="middle">${safeName.slice(0, 24)}</text>
+            </svg>`;
+            return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+        }
+
+        function renderNextBatch() {
+            const grid = document.getElementById('cardsGrid');
+            const emptyState = document.getElementById('emptyState');
+            const loadMoreContainer = document.getElementById('loadMoreContainer');
+
+            if (filteredCards.length === 0) {
+                emptyState.classList.remove('hidden');
+                loadMoreContainer.classList.add('hidden');
+                return;
+            }
+            emptyState.classList.add('hidden');
+
+            const nextSlice = filteredCards.slice(displayedCount, displayedCount + currentPageSize);
+            const fragment = document.createDocumentFragment();
+
+            nextSlice.forEach((card, idx) => {
+                const globalIndex = displayedCount + idx;
+                const primaryColor = card.colors[0] || 'Red';
+                const cMeta = COLOR_META[primaryColor] || COLOR_META['Red'];
+                const fallbackSrc = getFallbackCardBackSVG(card.code, card.name);
+                const imgSrc = card.frontImg || fallbackSrc;
+
+                const cardEl = document.createElement('div');
+                cardEl.className = `card-item group relative rounded-xl bg-db-card border border-db-border hover:border-amber-400/80 overflow-hidden shadow-lg cursor-pointer flex flex-col`;
+                cardEl.onclick = () => openCardModal(globalIndex);
+
+                // 稀有度徽章顏色
+                let rarityClass = 'bg-slate-800 text-slate-300 border-slate-700';
+                if (card.rarity === 'SR' || card.rarity === 'SCR' || card.rarity === 'L') {
+                    rarityClass = 'bg-gradient-to-r from-amber-500/30 to-orange-500/30 text-amber-300 border-amber-400/60';
+                } else if (card.rarity === 'R') {
+                    rarityClass = 'bg-sky-500/20 text-sky-300 border-sky-400/50';
+                }
+
+                cardEl.innerHTML = `
+                    <!-- 卡圖容器 -->
+                    <div class="relative aspect-[5/7] w-full bg-[#090D16] overflow-hidden">
+                        <img src="${imgSrc}" 
+                             alt="${card.name}" 
+                             loading="lazy"
+                             onerror="this.onerror=null; this.src='${fallbackSrc}';"
+                             class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+                        
+                        <!-- 頂部懸浮標籤：稀有度與費用 -->
+                        <div class="absolute top-2 left-2 right-2 flex items-center justify-between pointer-events-none">
+                            <span class="px-1.5 py-0.5 rounded text-[10px] font-display font-black border backdrop-blur-md shadow ${rarityClass}">
+                                ${card.rarity}
+                            </span>
+                            ${card.cost !== null ? `
+                            <span class="w-6 h-6 rounded-full bg-black/80 border border-amber-400/70 text-amber-300 font-display font-black text-xs flex items-center justify-center shadow">
+                                ${card.cost}
+                            </span>` : ''}
+                        </div>
+
+                        <!-- 領袖覺醒提示角標 -->
+                        ${card.backImg ? `
+                        <div class="absolute bottom-2 right-2 px-1.5 py-0.5 rounded bg-orange-600/90 text-white text-[10px] font-bold shadow flex items-center gap-1">
+                            <i class="fa-solid fa-rotate"></i> 覺醒
+                        </div>` : ''}
+                    </div>
+
+                    <!-- 底部資訊列 -->
+                    <div class="p-2.5 flex-1 flex flex-col justify-between bg-gradient-to-b from-db-card to-[#0D121F]">
+                        <div>
+                            <div class="flex items-center justify-between gap-1 mb-1">
+                                <span class="font-display text-[11px] font-bold text-slate-400">${card.code}</span>
+                                <span class="px-1.5 py-0.2 rounded text-[10px] font-bold border ${cMeta.bg} ${cMeta.text} ${cMeta.border}">
+                                    ${cMeta.label.split(' ')[0]}
+                                </span>
+                            </div>
+                            <h3 class="text-xs sm:text-sm font-bold text-slate-100 line-clamp-1 group-hover:text-amber-300 transition">
+                                ${card.name}
+                            </h3>
+                        </div>
+
+                        <div class="mt-2 pt-1.5 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
+                            <span>${card.cardType}</span>
+                            ${card.power !== null ? `<span class="font-display font-bold text-orange-300">${card.power.toLocaleString()}</span>` : '<span>-</span>'}
+                        </div>
+                    </div>
+                `;
+
+                fragment.appendChild(cardEl);
+            });
+
+            grid.appendChild(fragment);
+            displayedCount += nextSlice.length;
+
+            const remaining = filteredCards.length - displayedCount;
+            if (remaining > 0) {
+                loadMoreContainer.classList.remove('hidden');
+                document.getElementById('remainingCount').textContent = remaining;
+            } else {
+                loadMoreContainer.classList.add('hidden');
+            }
+        }
+
+        function loadMoreCards() {
+            renderNextBatch();
+        }
+
+        /**
+         * ============================================================================
+         * 6. 卡牌詳情 Modal 與 3D 傾斜互動
+         * ============================================================================
+         */
+        function openCardModal(index) {
+            const card = filteredCards[index];
+            if (!card) return;
+
+            activeModalCard = card;
+            isShowingBackFace = false;
+
+            renderModalContent();
+
+            const modal = document.getElementById('cardModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCardModal() {
+            const modal = document.getElementById('cardModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+            resetCardTilt();
+        }
+
+        function closeModalOnBackdrop(event) {
+            if (event.target.id === 'cardModal') {
+                closeCardModal();
+            }
+        }
+
+        function toggleCardFace() {
+            if (!activeModalCard || !activeModalCard.backImg) return;
+            isShowingBackFace = !isShowingBackFace;
+            renderModalContent();
+        }
+
+        function renderModalContent() {
+            const card = activeModalCard;
+            if (!card) return;
+
+            const backData = (isShowingBackFace && card.backData) ? card.backData : {};
+            const displayName = backData.name || card.name;
+            const displayPower = backData.power !== undefined ? backData.power : card.power;
+            const displayEffect = backData.effect || card.effect || '無特殊效果文字';
+            const displayFeatures = Array.isArray(backData.features) ? backData.features : card.features;
+
+            document.getElementById('modalSetBadge').textContent = card.setCode;
+            document.getElementById('modalCode').textContent = card.code;
+            document.getElementById('modalRarityBadge').textContent = card.rarity;
+            document.getElementById('modalCardName').textContent = displayName;
+            document.getElementById('modalSetName').textContent = card.setName;
+            document.getElementById('modalRawId').textContent = `ID: ${card.id}`;
+
+            // 正反面指示與切換按鈕
+            const awakenContainer = document.getElementById('awakenToggleContainer');
+            const faceIndicator = document.getElementById('modalFaceIndicator');
+            const toggleFaceText = document.getElementById('toggleFaceText');
+
+            if (card.backImg) {
+                awakenContainer.classList.remove('hidden');
+                if (isShowingBackFace) {
+                    faceIndicator.classList.remove('hidden');
+                    toggleFaceText.textContent = '切換回正面 (Front Side)';
+                } else {
+                    faceIndicator.classList.add('hidden');
+                    toggleFaceText.textContent = '切換至覺醒面 (Awakened Side)';
+                }
+            } else {
+                awakenContainer.classList.add('hidden');
+                faceIndicator.classList.add('hidden');
+            }
+
+            // 圖片設定
+            const imgEl = document.getElementById('modalCardImg');
+            const fallbackSrc = getFallbackCardBackSVG(card.code, displayName);
+            const targetImg = (isShowingBackFace && card.backImg) ? card.backImg : (card.frontImg || fallbackSrc);
+            imgEl.onerror = () => { imgEl.src = fallbackSrc; };
+            imgEl.src = targetImg;
+
+            // 顏色與類型徽章
+            const primaryColor = card.colors[0] || 'Red';
+            const cMeta = COLOR_META[primaryColor] || COLOR_META['Red'];
+            const colorBadge = document.getElementById('modalColorBadge');
+            colorBadge.className = `px-2.5 py-0.5 rounded-md text-xs font-bold border ${cMeta.bg} ${cMeta.text} ${cMeta.border}`;
+            colorBadge.textContent = card.colors.map(c => COLOR_META[c]?.label || c).join(' / ');
+
+            document.getElementById('modalTypeBadge').textContent = TYPE_META[card.cardType] || card.cardType;
+
+            // 數值欄位
+            document.getElementById('modalCost').textContent = card.cost !== null ? card.cost : '-';
+            document.getElementById('modalSpecCost').textContent = card.specifiedCost || '-';
+            document.getElementById('modalPower').textContent = displayPower !== null && displayPower !== undefined ? Number(displayPower).toLocaleString() : '-';
+            document.getElementById('modalCombo').textContent = card.comboPower !== null ? `+${card.comboPower.toLocaleString()}` : '-';
+
+            // 特徵列表
+            const featuresBox = document.getElementById('modalFeatures');
+            if (displayFeatures && displayFeatures.length > 0) {
+                featuresBox.innerHTML = displayFeatures.map(f => 
+                    `<span class="px-2.5 py-1 rounded-md bg-slate-800/90 border border-slate-700 text-slate-200 text-xs font-medium">${f}</span>`
+                ).join('');
+            } else {
+                featuresBox.innerHTML = `<span class="text-xs text-slate-500">無特徵標記</span>`;
+            }
+
+            // 效果文本高亮關鍵字 ([Auto], [Activate Main], [Permanent], [Blocker], [Critical], [Double Strike] 等)
+            const formattedEffect = formatEffectText(displayEffect);
+            document.getElementById('modalEffect').innerHTML = formattedEffect;
+        }
+
+        function formatEffectText(text) {
+            if (!text || text === '-') return '<span class="text-slate-500">此卡牌無技能效果文字。</span>';
+            const escaped = text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+            // 將中括號技能關鍵字高亮顯示
+            return escaped.replace(/\[([^\]]+)\]/g, '<span class="inline-block px-1.5 py-0.2 mx-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold text-xs">[$1]</span>');
+        }
+
+        function copyCardInfo() {
+            if (!activeModalCard) return;
+            const textToCopy = `[${activeModalCard.code}] ${activeModalCard.name}\nType: ${activeModalCard.cardType} | Color: ${activeModalCard.colors.join('/')} | Power: ${activeModalCard.power ?? '-'}\nEffect: ${activeModalCard.effect}`;
+            
+            const tempInput = document.createElement('textarea');
+            tempInput.value = textToCopy;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            try {
+                document.execCommand('copy');
+                showToast('已複製卡牌資訊至剪貼簿！', 'success');
+            } catch (err) {
+                showToast('複製失敗，請手動選取文字複製。', 'error');
+            }
+            document.body.removeChild(tempInput);
+        }
+
+        // 3D 卡牌傾斜互動效果 (支援滑鼠與觸控)
+        function initCardTiltInteraction() {
+            const wrapper = document.getElementById('tiltWrapper');
+            const card = document.getElementById('tiltCard');
+            const glare = document.getElementById('tiltGlare');
+
+            const handleMove = (clientX, clientY) => {
+                const rect = wrapper.getBoundingClientRect();
+                const x = clientX - rect.left;
+                const y = clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                const rotateX = ((y - centerY) / centerY) * -14;
+                const rotateY = ((x - centerX) / centerX) * 14;
+
+                card.style.transform = `rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.03, 1.03, 1.03)`;
+                glare.style.setProperty('--glare-x', `${(x / rect.width) * 100}%`);
+                glare.style.setProperty('--glare-y', `${(y / rect.height) * 100}%`);
+                glare.style.setProperty('--glare-opacity', '1');
+            };
+
+            wrapper.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
+            wrapper.addEventListener('mouseleave', resetCardTilt);
+
+            wrapper.addEventListener('touchmove', (e) => {
+                if (e.touches.length > 0) {
+                    handleMove(e.touches[0].clientX, e.touches[0].clientY);
+                }
+            }, { passive: true });
+            wrapper.addEventListener('touchend', resetCardTilt);
+        }
+
+        function resetCardTilt() {
+            const card = document.getElementById('tiltCard');
+            const glare = document.getElementById('tiltGlare');
+            if (card) card.style.transform = 'rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+            if (glare) glare.style.setProperty('--glare-opacity', '0');
+        }
+
+        /**
+         * ============================================================================
+         * 7. 提示訊息與事件監聽器初始化
+         * ============================================================================
+         */
+        let toastTimer = null;
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toastMessage');
+            const icon = document.getElementById('toastIcon');
+            const text = document.getElementById('toastText');
+
+            text.textContent = message;
+            icon.className = 'text-lg fa-solid ';
+            if (type === 'success') {
+                icon.className += 'fa-circle-check text-emerald-400';
+            } else if (type === 'warning') {
+                icon.className += 'fa-triangle-exclamation text-amber-400';
+            } else if (type === 'error') {
+                icon.className += 'fa-circle-xmark text-red-400';
+            } else {
+                icon.className += 'fa-circle-info text-sky-400';
+            }
+
+            toast.classList.remove('hidden');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3500);
+        }
+
+        // 綁定輸入與選單事件
+        window.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('searchInput');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            let searchDebounce = null;
+
+            searchInput.addEventListener('input', (e) => {
+                const val = e.target.value;
+                clearBtn.classList.toggle('hidden', val.length === 0);
+                clearTimeout(searchDebounce);
+                searchDebounce = setTimeout(() => {
+                    filterState.search = val;
+                    applyFiltersAndRender();
+                }, 220);
+            });
+
+            document.getElementById('setSelect').addEventListener('change', (e) => {
+                filterState.set = e.target.value;
+                applyFiltersAndRender();
+            });
+
+            document.getElementById('sortSelect').addEventListener('change', (e) => {
+                filterState.sort = e.target.value;
+                applyFiltersAndRender();
+            });
+
+            // 支援 ESC 鍵關閉 Modal
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeCardModal();
+                }
+            });
+
+            initCardTiltInteraction();
+            initAppData(false);
+        });
+    </script>
+</body>
+</html>
